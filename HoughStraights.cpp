@@ -29,11 +29,14 @@ return 0;
 void hough(Mat &src, Mat &dst, int th){
     Mat gray, smoothed, edgeCanny;
     cvtColor(src, gray, COLOR_BGR2GRAY);
-    GaussianBlur(gray, smoothed, Size(3,3), 0, 0);
-    Canny(smoothed, edgeCanny, 90, 160, 3);
 
-    int dist = hypot(src.rows, src.cols);
+    int dist = hypot(gray.rows, gray.cols);
+    
     Mat votes = Mat::zeros(dist*2, 180, CV_8U);
+    
+    GaussianBlur(gray, smoothed, Size(3,3), 0, 0);
+    
+    Canny(smoothed, edgeCanny, 90, 160, 3);
 
     double rho, theta;
     for(int i=0; i<edgeCanny.rows; i++){
@@ -48,6 +51,7 @@ void hough(Mat &src, Mat &dst, int th){
     }
 
     dst = src.clone();
+    
     for(int r=0; r<votes.rows; r++){
         for(int t=0; t<votes.cols; t++){
             if(votes.at<uchar>(r,t) >= th){
